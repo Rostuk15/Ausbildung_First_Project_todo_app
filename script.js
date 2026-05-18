@@ -1,3 +1,11 @@
+// proof if browser work with service worker 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+  .then(() => console.log('Service Worker registriert'))
+  .catch((err) => console.log('Error:', err));
+}
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const taskInput = document.getElementById
@@ -15,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressNumbers = document.getElementById
     ('numbers')
 
+
+    let confettiShown = false;
     // Visible Foto 
     const toggleEmptyState = () => { emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
         // dynami todolist 
@@ -29,9 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBar.style.width = totalTasks ? `${(completedTasks / totalTasks) * 100}%` : '0%';
         progressNumbers.textContent = `${completedTasks} / ${totalTasks}`;
 
-        if(checkCompletion && totalTasks > 0 && completedTasks === totalTasks){
-            launchConfetti();
-        }
+        if (completedTasks < totalTasks) {
+          confettiShown = false;
+      }
+  
+      // only 1 confetishow
+      if (checkCompletion && totalTasks > 0 && completedTasks === totalTasks && !confettiShown) {
+          confettiShown = true;
+          launchConfetti();
+      }
     };
 
     const saveTaskLocalStorage = () => {

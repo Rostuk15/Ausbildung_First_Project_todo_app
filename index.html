@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme_color" content="#ff6f91">
     <link rel="stylesheet" href="style.css">
     <!-- Font --> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -23,10 +25,10 @@
                     <p id="numbers">0 / 0</p>
                 </div>   
             </div>
-            <form class="input-area">
+            <div class="input-area">
                 <input type="text" id="task_input" placeholder="Add new task...">
                 <button type="submit" id="add_task_btn"  class="fa-solid fa-plus"></button>
-            </form>
+            </div>
             <div class="todos-container">
                 <ul id="task_list">
                 </ul>
@@ -35,7 +37,6 @@
         </div>
     </div>
 </body>
-<script src="script.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.9.1/tsparticles.confetti.bundle.min.js"></script>
+<script src="script.js"></script>
 </html>
