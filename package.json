@@ -1,0 +1,26 @@
+{
+  "name": "first_project_todoapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rostuk15/Ausbildung_First_Project_todo_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rostuk15/Ausbildung_First_Project_todo_app/issues"
+  },
+  "homepage": "https://github.com/Rostuk15/Ausbildung_First_Project_todo_app#readme",
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.5",
+    "babel-jest": "^30.4.1",
+    "jest": "^30.4.2"
+  }
+}
