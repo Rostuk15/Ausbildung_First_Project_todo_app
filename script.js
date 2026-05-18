@@ -7,18 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById
     ('task_list');
     const emptyIMAGE =  document.querySelector
-    ('.empty-img');
+    ('.empty_img');
     const todosContainer = document.querySelector
-    ('.tofod-container');
+    ('.todos-container');
     const progressBar = document.getElementById
     ('progress');
     const progressNumbers = document.getElementById
     ('numbers')
 
     // Visible Foto 
-    const togleEmptyState = () => { taskList.children.length === 0 ? 'block' : 'none'; 
+    const toggleEmptyState = () => { emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
         // dynami todolist 
-        todosContainer.style.width = taskList.children.length > 0 ? '100' : '50%';
+        todosContainer.style.width = taskList.children.length > 0 ? '100%' : '50%';
     };
 
     const updateProgress = (checkCompletion = true) => 
@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBar.style.width = totalTasks ? `${(completedTasks / totalTasks) * 100}%` : '0%';
         progressNumbers.textContent = `${completedTasks} / ${totalTasks}`;
 
-        if(checkCompletion && totalTasks >0 && completedTasks === totalTasks){
-            confetti();
+        if(checkCompletion && totalTasks > 0 && completedTasks === totalTasks){
+            launchConfetti();
         }
     };
 
@@ -39,13 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
             text: li.querySelector('span').textContent,
             completed: li.querySelector('.checkbox').checked
         }));
-        localStorage.setitem('tasks', JSON.stringify(tasks));
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }; 
 
     const loadTasksFromLocalStorage = () => {
         const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
         savedTasks.forEach(({text, completed}) => addTask(text, completed, false));
-        togleEmptyState();
+        toggleEmptyState();
         updateProgress();
     };
 
@@ -98,31 +98,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // delete from doom list
         li.querySelector('.delete-btn').addEventListener('click', () => {li.remove();
-            togleEmptyState();    
+            toggleEmptyState();    
             updateProgress();
             saveTaskLocalStorage();
         });    
 
         taskList.appendChild(li);
         taskInput.value = '';
-        togleEmptyState();
+        toggleEmptyState();
         updateProgress(checkCompletion);
         saveTaskLocalStorage();
     };
 
-    addTaskBtn.addEventListener('click', () => addTask);
+    addTaskBtn.addEventListener('click', () => addTask());
     taskInput.addEventListener('keypress', (e) => {
         if(e.key === 'Enter'){
-        e.preventDefault();
-            addTask();
+          e.preventDefault();
+          addTask();
         }
+
     });
 
-    loadTasksFromLocalStorage();
+    loadTasksFromLocalStorage(); 
 });
 
 
-const confetti = () => {
+const launchConfetti = () => {
     const count = 200,
   defaults = {
     origin: { y: 0.7 },
