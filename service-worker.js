@@ -1,4 +1,4 @@
-const CACHE_NAME = 'todo-app-v1'
+const CACHE_NAME = 'todo-app-v1.0.1'
 
 // file remember offline
 const FILES_TO_CACHE = [
@@ -15,6 +15,21 @@ const FILES_TO_CACHE = [
 self.addEventListener('install', (e) => {
     e.waitUnit(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CAHCE))
+    );
+});
+
+
+self.addEventListener('activate', (e) => {
+    e.waitUntil(
+        caches.keys().then((keyList) =>
+            Promise.all(
+                keyList.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key); 
+                    }
+                })
+            )
+        )
     );
 });
 
