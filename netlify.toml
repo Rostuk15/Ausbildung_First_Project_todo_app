@@ -1,0 +1,13 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    
+    # Schutzt von XSS atacke
+
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;"
+    
+    # Браузер не вгадує тип файлу сам
+    X-Content-Type-Options = "nosniff"
+    
+    # Schutzt from clickjacking
+    X-Frame-Options = "DENY"
