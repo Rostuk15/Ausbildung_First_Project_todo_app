@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let confettiShown = false;
     // Visible Foto 
     const toggleEmptyState = () => { emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
-        // dynami todolist 
+        // dynamic todolist 
         todosContainer.style.width = taskList.children.length > 0 ? '100%' : '50%';
     };
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
           confettiShown = false;
       }
   
-      // only 1 confetishow
+      // only 1 confetiShow
       if (checkCompletion && totalTasks > 0 && completedTasks === totalTasks && !confettiShown) {
           confettiShown = true;
           launchConfetti();

@@ -1,19 +1,19 @@
-// tasks.test.js — тести
+// tasks.test.js
 import { filterTasks, countCompleted } from './tasks.js';
 
-test('не додає пусті задачі', () => {
+test('keine leer Aufgaben', () => {
     const tasks = [
-        { text: 'Купити молоко', completed: false },
+        { text: 'Kaufen Milc', completed: false },
         { text: '', completed: false }  // пуста
     ];
     expect(filterTasks(tasks)).toHaveLength(1);
 });
 
-test('рахує виконані задачі', () => {
+test('Zahlen di Aufgaben', () => {
     const tasks = [
-        { text: 'Задача 1', completed: true },
-        { text: 'Задача 2', completed: true },
-        { text: 'Задача 3', completed: false }
+        { text: 'Aufgabe 1', completed: true },
+        { text: 'Aufgabe 2', completed: true },
+        { text: 'Aufgabe 3', completed: false }
     ];
     expect(countCompleted(tasks)).toBe(2);
 });

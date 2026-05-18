@@ -1,4 +1,4 @@
-// tasks.js — виносимо логіку окремо
+// tasks.js — Logick getrent
 export const filterTasks = (tasks) => {
     return tasks.filter(task => task.text.trim() !== '');
 };
