@@ -1,4 +1,4 @@
-// proof if browser work with service worker 
+    // prüfung ob Browser funktioniert mit "service worker" sonst bescreibene Fehler 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js')
   .then(() => console.log('Service Worker registriert'))
@@ -6,7 +6,7 @@ if ('serviceWorker' in navigator) {
 }
 
 
-
+    // verknüpfung html und Javascript
 document.addEventListener('DOMContentLoaded', () => {
     const taskInput = document.getElementById
     ('task_input');
@@ -25,12 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let confettiShown = false;
-    // Visible Foto 
+
+
+    // dynamsiche foto 
     const toggleEmptyState = () => { emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
-        // dynamic todolist 
+        
+    // dynamische todolist 
         todosContainer.style.width = taskList.children.length > 0 ? '100%' : '50%';
     };
 
+
+
+    // ProgressBar 
     const updateProgress = (checkCompletion = true) => 
     {
         const totalTasks = taskList.children.length;
@@ -43,12 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
           confettiShown = false;
       }
   
-      // only 1 confetiShow
+      // Nur 1 confetiShow wenn alle aufgaben fertig sind 
       if (checkCompletion && totalTasks > 0 && completedTasks === totalTasks && !confettiShown) {
           confettiShown = true;
           launchConfetti();
       }
     };
+
+
+
+
 
     const saveTaskLocalStorage = () => {
         const tasks = Array.from(taskList.querySelectorAll('li')).map(li => ({
@@ -58,6 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }; 
 
+
+
     const loadTasksFromLocalStorage = () => {
         const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
         savedTasks.forEach(({text, completed}) => addTask(text, completed, false));
@@ -65,6 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateProgress();
     };
 
+
+
+
+      // functions add-edit-delete und checkbox task 
     const addTask = (text, completed = false, checkCompletion = true) => {
         const taskText = text || taskInput.value.trim()
         if(!taskText) {
@@ -72,7 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const li = document.createElement('li');
-        // dynamic value html-create html element
+
+      //dynamische btn edit and delete und checkbox
         li.innerHTML = `
             <input type="checkbox" class="checkbox" ${completed ? 'checked' : ''} />
             <span>${taskText}</span>
@@ -91,6 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
             editBtn.style.pointerEvents = 'none';
         }
         
+
+      // checbox für fertige aufgabe 
         checkbox.addEventListener('change', () => {
             const isChecked = checkbox.checked
             li.classList.toggle('completed', isChecked);
@@ -101,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
             saveTaskLocalStorage();
         });
 
+
+      //  edit btn für li 
         editBtn.addEventListener('click', () => {
             if(!checkbox.checked) {
                 taskInput.value = li.querySelector('span').textContent;
@@ -112,7 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
 
-        // delete from doom list
+
+
+      // löschen btn 
         li.querySelector('.delete-btn').addEventListener('click', () => {li.remove();
             toggleEmptyState();    
             updateProgress();
@@ -126,6 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         saveTaskLocalStorage();
     };
 
+
+
+      // enter oder knopf plus für addTask
     addTaskBtn.addEventListener('click', () => addTask());
     taskInput.addEventListener('keypress', (e) => {
         if(e.key === 'Enter'){
@@ -138,6 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadTasksFromLocalStorage(); 
 });
 
+
+
+    // confeti wenn alle tasks fertig sind 
 
 const launchConfetti = () => {
     const count = 200,

@@ -180,15 +180,15 @@ body {
 #task_list li .checkbox:checked {
     background: #ff6f91;
     transform: scale(1.1);
-}
-
-#task_list li .checkbox:checked::before {
-    content: '\2713';
-    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1rem;
+}
+
+#task_list li .checkbox:checked::before {
+    content: '\2713';
+    color: #ffffff;
 }
 
 #task_list li span {

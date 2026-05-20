@@ -9,7 +9,7 @@ test('keine leer Aufgaben', () => {
     expect(filterTasks(tasks)).toHaveLength(1);
 });
 
-test('Zahlen di Aufgaben', () => {
+test('Zahlen die Aufgaben', () => {
     const tasks = [
         { text: 'Aufgabe 1', completed: true },
         { text: 'Aufgabe 2', completed: true },

@@ -1,6 +1,6 @@
 const CACHE_NAME = 'todo-app-v1.0.1'
 
-// file remember offline
+        // datei offlein nutzung
 const FILES_TO_CACHE = [
     '/',
     '/index.html',
@@ -10,15 +10,17 @@ const FILES_TO_CACHE = [
     '/icon-512.png'
 ];
 
-// install work only 1 time in open 
-// open "cloud" and put all file there
+
+
+        // install work only 1 time in open 
+        // open "cloud" and put all file there
 self.addEventListener('install', (e) => {
     e.waitUnit(
         caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CAHCE))
     );
 });
 
-
+        // überprüft list von cache löscht altere und lasst nur aktuelle CACHE_NAME
 self.addEventListener('activate', (e) => {
     e.waitUntil(
         caches.keys().then((keyList) =>
@@ -33,8 +35,10 @@ self.addEventListener('activate', (e) => {
     );
 });
 
-// fetch work when browser answer 
-// firs look in cache, if not find in Internet
+
+
+// fetch funktioniert wenn browser fragt
+// zurest schaut in cache whenn nicht gefunden hat  dann sucht in Internet
 
 self.addEventListener('fetch', (e) => {
     e.respondWith(
