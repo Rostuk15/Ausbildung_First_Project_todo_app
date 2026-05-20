@@ -1,0 +1,293 @@
+## Розбір всього твого коду по блоках
+
+---
+
+### 1. Service Worker
+```javascript
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+  .then(() => console.log('Service Worker registriert'))
+  .catch((err) => console.log('Error:', err));
+}
+```
+**Що це?** Service Worker — це фоновий скрипт який дозволяє додатку працювати **офлайн**. Він кешує файли щоб сторінка відкривалась навіть без інтернету.
+
+- `if ('serviceWorker' in navigator)` — перевіряє чи браузер підтримує це
+- `.then()` — якщо успішно зареєстровано — пише в консоль
+- `.catch()` — якщо помилка — пише помилку
+
+---
+
+### 2. `DOMContentLoaded`
+```javascript
+document.addEventListener('DOMContentLoaded', () => {
+    ...
+});
+```
+**Що це?** Весь твій основний код загорнутий сюди. Це означає: **"почни виконувати код тільки коли HTML повністю завантажився"**. Без цього JS міг би запуститись раніше ніж HTML і не знайти елементи.
+
+---
+
+### 3. Підключення HTML елементів до JS
+```javascript
+const taskInput = document.getElementById('task_input');
+const addTaskBtn = document.getElementById('add_task_btn');
+const taskList = document.getElementById('task_list');
+const emptyIMAGE = document.querySelector('.empty_img');
+const todosContainer = document.querySelector('.todos-container');
+const progressBar = document.getElementById('progress');
+const progressNumbers = document.getElementById('numbers');
+```
+**Що це?** Ти знаходиш елементи зі своєї HTML сторінки і зберігаєш їх у змінні щоб потім керувати ними.
+
+| Змінна | Що це в HTML |
+|--------|-------------|
+| `taskInput` | поле вводу тексту |
+| `addTaskBtn` | кнопка "+" |
+| `taskList` | список `ul` з задачами |
+| `emptyIMAGE` | картинка коли список порожній |
+| `todosContainer` | обгортка всього списку |
+| `progressBar` | смужка прогресу |
+| `progressNumbers` | текст "2 / 5" |
+
+---
+
+### 4. `toggleEmptyState`
+```javascript
+const toggleEmptyState = () => {
+    emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
+    todosContainer.style.width = taskList.children.length > 0 ? '100%' : '50%';
+};
+```
+**Що це?** Перевіряє скільки задач в списку і:
+- якщо `0` — показує картинку (`block`) і звужує контейнер (`50%`)
+- якщо більше `0` — ховає картинку (`none`) і розширює контейнер (`100%`)
+
+`? :` — це скорочений `if/else`:
+```javascript
+// це те саме що:
+if (taskList.children.length === 0) {
+    emptyIMAGE.style.display = 'block'
+} else {
+    emptyIMAGE.style.display = 'none'
+}
+```
+
+---
+
+### 5. `updateProgress`
+```javascript
+const updateProgress = (checkCompletion = true) => {
+    const totalTasks = taskList.children.length;
+    const completedTasks = taskList.querySelectorAll('.checkbox:checked').length;
+
+    progressBar.style.width = totalTasks ? `${(completedTasks / totalTasks) * 100}%` : '0%';
+    progressNumbers.textContent = `${completedTasks} / ${totalTasks}`;
+
+    if (completedTasks < totalTasks) {
+        confettiShown = false;
+    }
+
+    if (checkCompletion && totalTasks > 0 && completedTasks === totalTasks && !confettiShown) {
+        confettiShown = true;
+        launchConfetti();
+    }
+};
+```
+**Що це?** Оновлює прогрес бар і лічильник.
+
+- `totalTasks` — скільки всього `li` в списку
+- `completedTasks` — скільки чекбоксів відмічено
+- `(completedTasks / totalTasks) * 100` — рахує відсоток. Наприклад `2/5 * 100 = 40%`
+- `checkCompletion = true` — параметр за замовчуванням. Якщо не передати нічого — буде `true`
+- конфеті запускається тільки один раз (`!confettiShown`) коли всі задачі виконані
+
+---
+
+### 6. `saveTaskLocalStorage`
+```javascript
+const saveTaskLocalStorage = () => {
+    const tasks = Array.from(taskList.querySelectorAll('li')).map(li => ({
+        text: li.querySelector('span').textContent,
+        completed: li.querySelector('.checkbox').checked
+    }));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+};
+```
+**Що це?** Зберігає всі задачі в пам'ять браузера щоб після перезавантаження вони не зникли.
+
+- `Array.from(...)` — перетворює список `li` елементів в масив
+- `.map(li => ...)` — проходить по кожному `li` і витягує потрібні дані
+- результат виглядає так:
+```javascript
+[
+    { text: "Купити молоко", completed: false },
+    { text: "Зробити зарядку", completed: true }
+]
+```
+- `JSON.stringify` — перетворює масив в текст бо `localStorage` зберігає тільки текст
+- `localStorage.setItem` — записує в пам'ять браузера
+
+---
+
+### 7. `loadTasksFromLocalStorage`
+```javascript
+const loadTasksFromLocalStorage = () => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    savedTasks.forEach(({text, completed}) => addTask(text, completed, false));
+    toggleEmptyState();
+    updateProgress();
+};
+```
+**Що це?** При завантаженні сторінки — зчитує збережені задачі і відновлює їх.
+
+- `localStorage.getItem('tasks')` — читає збережений текст
+- `JSON.parse` — перетворює текст назад в масив
+- `|| []` — якщо нічого не збережено — використовує порожній масив
+- `.forEach` — проходить по кожній задачі і викликає `addTask`
+
+---
+
+### 8. `addTask` — головна функція
+```javascript
+const addTask = (text, completed = false, checkCompletion = true) => {
+    const taskText = text || taskInput.value.trim();
+    if (!taskText) return;
+    ...
+```
+**Що це?** Створює нову задачу. Приймає три параметри:
+
+| Параметр | Для чого |
+|----------|---------|
+| `text` | текст задачі (якщо передається з localStorage) |
+| `completed` | чи вже виконана |
+| `checkCompletion` | чи запускати конфеті |
+
+- `text || taskInput.value.trim()` — або переданий текст, або те що юзер написав в полі
+- `if (!taskText) return` — якщо поле порожнє — нічого не робити
+
+---
+
+### 9. Створення `li`
+```javascript
+const li = document.createElement('li');
+li.draggable = true;
+
+li.innerHTML = `
+    <input type="checkbox" class="checkbox" ${completed ? 'checked' : ''} />
+    <span>${taskText}</span>
+    <div class="task-buttons">
+        <button class="edit-btn">...</button>
+        <button class="delete-btn">...</button>
+    </div>`;
+```
+- `createElement('li')` — створює новий рядок списку в пам'яті (ще не на сторінці)
+- `li.draggable = true` — дозволяє перетягування
+- `li.innerHTML` — заповнює `li` HTML контентом
+- `${completed ? 'checked' : ''}` — якщо задача виконана — додає атрибут `checked` до чекбоксу
+
+---
+
+### 10. Події на чекбокс, edit, delete
+```javascript
+checkbox.addEventListener('change', () => { ... });
+editBtn.addEventListener('click', () => { ... });
+li.querySelector('.delete-btn').addEventListener('click', () => { ... });
+```
+**Що це?** Три слухачі подій:
+
+- **checkbox** — при зміні: додає/прибирає клас `completed`, блокує кнопку edit, оновлює прогрес
+- **editBtn** — при кліку: переносить текст назад в поле вводу і видаляє `li`
+- **deleteBtn** — при кліку: просто видаляє `li`
+
+Всі три в кінці викликають `saveTaskLocalStorage()` щоб зберегти зміни.
+
+---
+
+### 11. Drag and Drop
+```javascript
+function enableDragAndDrop(li) {
+    li.addEventListener('dragstart', () => {
+        li.classList.add('draging');
+    });
+    li.addEventListener('dragend', () => {
+        li.classList.remove('draging');
+        saveTaskLocalStorage();
+    });
+}
+
+taskList.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const draggingEl = document.querySelector('.draging');
+    const afterEl = getDragAfterElement(taskList, e.clientY);
+
+    if (afterEl === null) {
+        taskList.appendChild(draggingEl);
+    } else {
+        taskList.insertBefore(draggingEl, afterEl);
+    }
+});
+```
+- `enableDragAndDrop(li)` — вішає події на кожен `li` окремо
+- `dragstart` — додає клас `.draging` (елемент стає прозорим)
+- `dragend` — прибирає клас і **зберігає новий порядок** в localStorage
+- `dragover` на `taskList` — кожну мить поки тягнеш, переставляє елемент на нову позицію
+
+---
+
+### 12. `getDragAfterElement`
+```javascript
+function getDragAfterElement(list, mouseY) {
+    const draggableEls = [...list.querySelectorAll('li:not(.draging)')];
+
+    return draggableEls.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = mouseY - box.top - box.height / 2;
+
+        if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+```
+**Що це?** Визначає **перед яким елементом** вставити той що тягнемо.
+
+- бере всі `li` крім того що тягнемо
+- для кожного рахує відстань від курсору до середини елементу
+- повертає найближчий елемент **знизу від курсору**
+
+---
+
+### 13. Кнопки запуску
+```javascript
+addTaskBtn.addEventListener('click', () => addTask());
+taskInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addTask();
+    }
+});
+```
+Два способи додати задачу — клік на кнопку або натискання `Enter`.
+
+---
+
+### Загальна схема як все працює разом:
+
+```
+Сторінка завантажилась
+        ↓
+loadTasksFromLocalStorage → відновлює збережені задачі
+        ↓
+Юзер пише текст + натискає Enter або "+"
+        ↓
+addTask → створює li → вішає події → додає в список
+        ↓
+Юзер тягне задачу → enableDragAndDrop → getDragAfterElement → insertBefore
+        ↓
+Юзер відмічає задачу → updateProgress → можливо конфеті 🎉
+        ↓
+Кожна зміна → saveTaskLocalStorage → зберігається в браузері
+```

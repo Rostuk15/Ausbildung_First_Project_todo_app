@@ -202,6 +202,15 @@ body {
     color: #000;
 }
 
+li[draggable] {
+    cursor: grab;
+}
+
+li.dragging {
+    opacity: '0.4';
+    cursor: grabbing;
+}
+
 .task-buttons {
     display: flex;
     gap: 10px;

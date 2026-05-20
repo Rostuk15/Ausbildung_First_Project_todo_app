@@ -21,17 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById
     ('progress');
     const progressNumbers = document.getElementById
-    ('numbers')
+    ('numbers');
+
+    
 
 
     let confettiShown = false;
 
 
-    // dynamsiche foto 
-    const toggleEmptyState = () => { emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
-        
-    // dynamische todolist 
-        todosContainer.style.width = taskList.children.length > 0 ? '100%' : '50%';
+    // prüft wieviel afugaben in list und dynamsiche foto und container
+    const toggleEmptyState = () => { 
+      emptyIMAGE.style.display = taskList.children.length === 0 ? 'block' : 'none';
+      todosContainer.style.width = taskList.children.length > 0 ? '100%' : '50%';
     };
 
 
@@ -59,7 +60,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    //DragandDropfunc(Blur)
+    function enableDragAndDrop(li) {
+      li.addEventListener('dragstart', () => {
+        li.classList.add('dragging')
+      });
 
+      li.addEventListener('dragend', () => {
+        li.classList.remove('dragging')
+        saveTaskLocalStorage();
+      });
+    };
+
+
+    taskList.addEventListener('dragover', (e) => {
+      e.preventDefault();
+
+      const draggingElement = document.querySelector('.dragging');
+      const afterDragElement = getDragAfterElement(taskList, e.clientY);
+
+      if (afterDragElement === null) {
+        taskList.appendChild(draggingElement);
+      } else {
+        taskList.insertBefore(draggingElement, afterDragElement)
+      }
+    });
+
+
+    function getDragAfterElement(list, mouseY) {
+      const draggableElements = [...list.querySelectorAll('li:not(.dragging)')];
+
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = mouseY - box.top - box.height / 2;
+
+        if (offset < 0 && offset > closest.offset) {
+          return {offset, element: child };
+        } else {
+          return closest;
+        }
+      }, {offset: Number.NEGATIVE_INFINITY}).element;
+    };
+
+
+
+
+
+    // speicher aufgaben in speicher browser  
     const saveTaskLocalStorage = () => {
         const tasks = Array.from(taskList.querySelectorAll('li')).map(li => ({
             text: li.querySelector('span').textContent,
@@ -80,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-      // functions add-edit-delete und checkbox task 
+      // Haupt-functions add-edit-delete und checkbox task 
     const addTask = (text, completed = false, checkCompletion = true) => {
         const taskText = text || taskInput.value.trim()
         if(!taskText) {
@@ -88,6 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const li = document.createElement('li');
+      
+      
+      // drag and drop für 'li'
+        li.draggable = true;
+
 
       //dynamische btn edit and delete und checkbox
         li.innerHTML = `
@@ -143,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });    
 
         taskList.appendChild(li);
+        enableDragAndDrop(li);
         taskInput.value = '';
         toggleEmptyState();
         updateProgress(checkCompletion);
@@ -151,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-      // enter oder knopf plus für addTask
+    // zwei möglichkeit tasks eingeben 'Enter' und Plus
     addTaskBtn.addEventListener('click', () => addTask());
     taskInput.addEventListener('keypress', (e) => {
         if(e.key === 'Enter'){
