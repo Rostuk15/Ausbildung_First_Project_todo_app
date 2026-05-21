@@ -25,6 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-    // uafladen scpeichende Daten
+    // afladen scpeichende Daten
     loadTasksFromLocalStorage();
 });
