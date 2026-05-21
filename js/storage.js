@@ -1,6 +1,6 @@
 // save und load datei 
 
-const saveTasklocalStorage = () => {
+const saveTaskLocalStorage = () => {
     const taskList = document.getElementById('task_list');
 
     const tasks = Array.from(taskList.querySelectorAll('li')).map(li => ({
