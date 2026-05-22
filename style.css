@@ -207,14 +207,21 @@ li[draggable] {
 }
 
 li.dragging {
-    opacity: '0.4';
+    opacity: '0.3';
     cursor: grabbing;
+    transform: scale(0.97) rotate(1.5deg);
 }
 
 /* während drag handy nicht text auswählen */
 li {
+    transition: transform 0.18s ease;
     -webkit-user-select: none;
     user-select: none;
+    touch-action: none;
+}
+
+li.dragover {
+    transform: translateY(4px);
 }
 
 .task-buttons {
