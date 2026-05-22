@@ -9,7 +9,38 @@ const enableDragAndDrop = (li) => {
         li.classList.remove('dragging')
         saveTaskLocalStorage();
       });
-    };
+
+    // handy drag and drop
+   li.addEventListener('touchstart', (e) => {
+    li.classList.add('dragging');
+   
+    li._touchStartY = e.touches[0].clientY;
+    li._touchStartX = e.touches[0].clientX;
+   }, {passive: true});
+
+
+    li.addEventListener('touchemove', (e) => {
+      e.preventDefault(); // stop scroll während drag
+    
+    const touch = e.touches[0];
+    const taskList = document.getElementById('task_list');
+    const afterDragElement = getDragAfterElement(taskList, touch.clientY);
+
+    if (afterDragElement === null) {
+      taskList.appendChild(li);
+    } else {
+      taskList.insertBefore(li, afterEl);
+    }
+    }, {passive: false}); // false weil preventDefault brauchen
+
+    li.addEventListener('touchend', () => {
+      li.classList.remove('dragging');
+      saveTaskLocalStorage();
+    });
+};
+
+
+
 
     const initDragAndDrop = () => {
         const taskList = document.getElementById('task_list');

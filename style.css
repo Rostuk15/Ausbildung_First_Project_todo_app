@@ -211,6 +211,13 @@ li.dragging {
     cursor: grabbing;
 }
 
+/* während drag handy nicht text auswählen */
+li {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+}
+
 .task-buttons {
     display: flex;
     gap: 10px;
