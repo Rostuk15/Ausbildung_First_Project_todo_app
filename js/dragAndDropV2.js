@@ -1,12 +1,12 @@
-// ============================================
-// dragAndDrop.js — drag and drop для ПК і телефону
-// ============================================
 
-let dragSrcEl = null; // який елемент тягнемо
+//drag and drop function Computer und Handy
+
+
+let dragSrcEl = null; // das element welche wir ziehen
 
 const enableDragAndDrop = (li) => {
 
-    // ======= ПК =======
+    // Für Computer
     li.addEventListener('dragstart', () => {
         dragSrcEl = li;
         li.classList.add('dragging');
@@ -18,7 +18,7 @@ const enableDragAndDrop = (li) => {
     });
 
 
-    // ======= ТЕЛЕФОН =======
+    // Für Handy
     li.addEventListener('touchstart', (e) => {
         dragSrcEl = li;
         li.classList.add('dragging');
@@ -26,17 +26,17 @@ const enableDragAndDrop = (li) => {
 
 
     li.addEventListener('touchmove', (e) => {
-        e.preventDefault();
+        e.preventDefault(); // stop scroll während drag
 
-        // знаходимо елемент під пальцем
+        // finden element unter finger
         const touch = e.touches[0];
 
-        // ховаємо елемент що тягнемо щоб знайти що під ним
+        // ховаємо елемент що тягнемо щоб знайти що під ним -- verstecken ziehende element dass was unter finden
         dragSrcEl.style.display = 'none';
         const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
         dragSrcEl.style.display = '';
 
-        // якщо під пальцем є li — переставляємо
+        // when unter finger ist li - transportieren
         if (elementBelow) {
             const targetLi = elementBelow.closest('li');
             const taskList = document.getElementById('task_list');
@@ -53,7 +53,7 @@ const enableDragAndDrop = (li) => {
                 }
             }
         }
-    }, { passive: false });
+    }, { passive: false }); // false weil preventDefault brauchen
 
 
     li.addEventListener('touchend', () => {
